@@ -10,7 +10,8 @@ int main(int argc, char *argv[]){
     signal(SIGINT, &handle_sighandle);
     signal(SIGHUP, &handle_sighandle);
     int n = atoi(argv[1]);
-    for (int i = 2; i < n; i = i * 2){
+    printf("%d\n", 0);
+    for (int i = 2; i <= n; i = i * 2){
         printf("%d\n", i);
         sleep(5);
     }
