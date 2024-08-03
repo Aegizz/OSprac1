@@ -3,24 +3,29 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-void handle_sigint(int sig);
-void handle_sighup(int sig);
+void handle_sighandle(int sig);
+
 
 int main(int argc, char *argv[]){
-    signal(SIGINT, handle_sigint);
-    signal(SIGHUP, handle_sighup);
+    signal(SIGINT, handle_sighandle);
+    signal(SIGHUP, handle_sighandle);
     int n = atoi(argv[1]);
     for (int i = 2; i <= n; i = i + 2){
         printf("%d\n", i);
+        fflush(stdout);
         sleep(5);
     }
     return 0;
 }
 
-void handle_sigint(int sig){
-    printf("Yeah!\n");
-}
+void handle_sighandle(int sig){
+    if (sig == SIGHUP){
+        printf("Ouch!\n");
+        fflush(stdout);
 
-void handle_sighup(int sig){
-    printf("Ouch!\n");
+    } else if (sig == SIGINT){
+        printf("Yeah!\n");
+        fflush(stdout);
+
+    }
 }
