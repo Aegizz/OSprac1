@@ -35,8 +35,7 @@ void prompt(void)
 
 void handle_background(int sig){
   int status;
-  pid_t pid;
-  while ((pid == waitpid(-1, &status, WNOHANG)) > 0){
+  while (waitpid(-1, &status, WNOHANG) > 0){
     if (WIFEXITED(status)){
       printf("Finished running in the background.\n");
     }
@@ -86,7 +85,7 @@ int main(int argk, char *argv[], char *envp[])
     /* assert i is number of tokens + 1 */
     if (strcmp(v[i-1], "&") == 0){
       background = 1;
-      v[i-1] == NULL;
+      v[i-1] = NULL;
     }
     /* fork a child process to exec the command in v[0] */
 

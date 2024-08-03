@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
-#include<unistd.h>
+#include <unistd.h>
 #include <stdlib.h>
 
 void handle_sigint(int sig);
@@ -19,10 +19,8 @@ int main(int argc, char *argv[]){
 
 void handle_sigint(int sig){
     printf("Yeah!\n");
-    usleep(5000000);
 }
 
 void handle_sighup(int sig){
     printf("Ouch!\n");
-    usleep(5000000);
 }
