@@ -90,12 +90,8 @@ int main(int argk, char *argv[], char *envp[])
       background = 0;
     }
     if (strcmp(v[0], "cd") == 0){
-      if (v[1] == NULL){
-        fprintf(stderr, "cd: missing argument\n");
-      } else {
-        if (chdir(v[1]) != 0){
+      if (chdir(v[1]) != 0){
           perror("cd");
-        }
       }
       continue;
     }
