@@ -117,6 +117,7 @@ int main(int argk, char *argv[], char *envp[])
       default:			/* code executed only by parent process */
       {
         if (!background){
+          printf("Process %d started in the background\n", frkRtnVal);
           wpid = waitpid(frkRtnVal, NULL, 0);
           if (wpid == -1){
             perror("waitpid");
