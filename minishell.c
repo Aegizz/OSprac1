@@ -35,10 +35,14 @@ void prompt(void)
 
 void handle_background(int sig){
   int status;
-  while (waitpid(-1, &status, WNOHANG) > 0){
+  pid_t pid;
+  while ((pid = waitpid(-1, &status, WNOHANG)) > 0){
     if (WIFEXITED(status)){
-      printf("Finished running in the background.\n");
+      printf("Process %d finished running in the background.\n", pid);
+    } else if (WIFSIGNALED(status)){
+      printf("\nProcess %d killed by signal %d\n", pid, WTERMSIG(status));
     }
+    prompt();
   }
 }
 
