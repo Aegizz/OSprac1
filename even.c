@@ -24,5 +24,4 @@ void handle_sighandle(int sig){
     } else if (sig == SIGINT){
         printf("Yeah!\n");
     }
-    sleep(5);
 }
