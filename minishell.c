@@ -86,6 +86,18 @@ int main(int argk, char *argv[], char *envp[])
     if (strcmp(v[i-1], "&") == 0){
       background = 1;
       v[i-1] = NULL;
+    } else {
+      background = 0;
+    }
+    if (strcmp(v[0], "cd") == 0){
+      if (v[1] == NULL){
+        fprintf(stderr, "cd: missing argument\n");
+      } else {
+        if (chdir(v[1]) != 0){
+          perror("cd");
+        }
+      }
+      continue;
     }
     /* fork a child process to exec the command in v[0] */
 
@@ -105,13 +117,13 @@ int main(int argk, char *argv[], char *envp[])
       default:			/* code executed only by parent process */
       {
         if (!background){
-          wpid = wait(0);
+          wpid = waitpid(frkRtnVal, NULL, 0);
           if (wpid == -1){
             perror("waitpid");
           }
           printf("%s done \n", v[0]);
-          break;
         }
+        break;
 
       }
     }				/* switch */
