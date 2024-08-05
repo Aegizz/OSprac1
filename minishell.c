@@ -38,11 +38,9 @@ void handle_background(int sig){
   pid_t pid;
   while ((pid = waitpid(-1, &status, WNOHANG)) > 0){
     if (WIFEXITED(status)){
-      printf("Process %d finished running in the background.\n", pid);
     } else if (WIFSIGNALED(status)){
-      printf("\nProcess %d killed by signal %d\n", pid, WTERMSIG(status));
     }
-    prompt();
+    return;
   }
 }
 
@@ -116,14 +114,10 @@ int main(int argk, char *argv[], char *envp[])
         }
       default:			/* code executed only by parent process */
         {
-          if (background) {
-              printf("Process %d started in the background\n", frkRtnVal);
-          } else {
-              if ((wpid = waitpid(frkRtnVal, NULL, 0)) == -1) {
-                  perror("waitpid");
-              }
-              printf("%s done\n", v[0]);
-          }
+
+          if ((wpid = waitpid(frkRtnVal, NULL, 0)) == -1) {
+              perror("waitpid");
+          }          
           break;
         }
     }				/* switch */
