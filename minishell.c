@@ -119,7 +119,7 @@ int main(int argk, char *argv[], char *envp[])
           if (background) {
               printf("Process %d started in the background\n", frkRtnVal);
           } else {
-              if (waitpid(frkRtnVal, NULL, 0) == -1) {
+              if ((wpid = waitpid(frkRtnVal, NULL, 0)) == -1) {
                   perror("waitpid");
               }
               printf("%s done\n", v[0]);
