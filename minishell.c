@@ -34,14 +34,8 @@ void prompt(void)
 }
 
 void handle_background(int sig){
-  int status;
-  pid_t pid;
-  while ((pid = waitpid(-1, &status, WNOHANG)) > 0){
-    if (WIFEXITED(status)){
-    } else if (WIFSIGNALED(status)){
-    }
-    return;
-  }
+  fflush(stdout);
+  prompt();
 }
 
 
@@ -57,7 +51,7 @@ int main(int argk, char *argv[], char *envp[])
   char           *sep = " \t\n";/* command line token separators    */
   int             i;		/* parse index */
 
-  int background = 0;
+  int background;
   signal(SIGCHLD, handle_background);
   /* prompt for and process one command line at a time  */
 
@@ -86,8 +80,8 @@ int main(int argk, char *argv[], char *envp[])
     }
     /* assert i is number of tokens + 1 */
     if (strcmp(v[i-1], "&") == 0){
-      background = 1;
       v[i-1] = NULL;
+      background = 1;
     } else {
       background = 0;
     }
@@ -110,17 +104,24 @@ int main(int argk, char *argv[], char *envp[])
 	        execvp(v[0], v);
           perror("execvp");
           exit(EXIT_FAILURE);
-          break;
         }
       default:			/* code executed only by parent process */
         {
-
-          if ((wpid = waitpid(frkRtnVal, NULL, 0)) == -1) {
-              perror("waitpid");
-          }          
-          break;
+          if (background) {
+              // If it's a background process, no need to wait for it explicitly
+              // The SIGCHLD signal handler will take care of background processes
+              break;
+          } else {
+              if ((wpid = waitpid(frkRtnVal, NULL, 0)) == -1) {
+                  perror("waitpid");
+              } else {
+                  printf("%s done\n", v[0]);
+              }
+          }
         }
     }				/* switch */
+
+    fflush(stdout);
   }				/* while */
   return 0;
 }				/* main */
