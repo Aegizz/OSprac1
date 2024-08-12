@@ -26,6 +26,17 @@ char            line[NL];	/* command input buffer */
 	shell prompt
  */
 
+typedef struct {
+    int job_number;
+    pid_t pid;
+    char command[NL];
+} Job;
+
+Job jobs[NL];
+int job_count = 0;   /* Number of background jobs */
+
+
+
 void prompt(void)
 {
   fprintf(stdout, "\n msh> ");
@@ -34,8 +45,24 @@ void prompt(void)
 }
 
 void handle_background(int sig){
-  fflush(stdout);
-  prompt();
+    int status;
+    pid_t pid;
+
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+        for (int i = 0; i < job_count; i++) {
+            if (jobs[i].pid == pid) {
+                printf("[%d]+ Done %s\n", jobs[i].job_number, jobs[i].command);
+                // Remove the job from the list
+                for (int j = i; j < job_count - 1; j++) {
+                    jobs[j] = jobs[j + 1];
+                }
+                job_count--;
+                break;
+            }
+        }
+    }
+
+    prompt();
 }
 
 
@@ -87,7 +114,7 @@ int main(int argk, char *argv[], char *envp[])
     }
     if (strcmp(v[0], "cd") == 0){
       if (chdir(v[1]) != 0){
-          perror("cd");
+          perror("chdir");
       }
       continue;
     }
@@ -110,13 +137,24 @@ int main(int argk, char *argv[], char *envp[])
           if (background) {
               // If it's a background process, no need to wait for it explicitly
               // The SIGCHLD signal handler will take care of background processes
+              jobs[job_count].job_number = job_count + 1;
+              jobs[job_count].pid = frkRtnVal;
+              strcpy(jobs[job_count].command, v[0]);
+              job_count++;
+              
+              // Print job start message
+              printf("[%d] %d\n", jobs[job_count - 1].job_number, frkRtnVal);
               break;
           } else {
-              if ((wpid = waitpid(frkRtnVal, NULL, 0)) == -1) {
-                  perror("waitpid");
+              wpid = wait(NULL);
+              if (wpid == -1) {
+                if (errno != ECHILD) {
+                    perror("wait");
+                }
               } else {
-                  printf("%s done\n", v[0]);
+                printf("%s done\n", v[0]);
               }
+              
           }
         }
     }				/* switch */
