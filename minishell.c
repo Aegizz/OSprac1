@@ -150,8 +150,6 @@ int main(int argk, char *argv[], char *envp[])
                 if (errno != ECHILD) {
                     perror("wait");
                 }
-              } else {
-                printf("%s done\n", v[0]);
               }
               
           }
