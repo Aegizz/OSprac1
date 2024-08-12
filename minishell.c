@@ -62,7 +62,6 @@ void handle_background(int sig){
         }
     }
 
-    prompt();
 }
 
 
