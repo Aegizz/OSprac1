@@ -108,6 +108,7 @@ int main(int argk, char *argv[], char *envp[])
     if (strcmp(v[i-1], "&") == 0){
       v[i-1] = NULL;
       background = 1;
+      i--;
     } else {
       background = 0;
     }
@@ -138,7 +139,14 @@ int main(int argk, char *argv[], char *envp[])
               // The SIGCHLD signal handler will take care of background processes
               jobs[job_count].job_number = job_count + 1;
               jobs[job_count].pid = frkRtnVal;
-              strcpy(jobs[job_count].command, v[0]);
+              jobs[job_count].command[0] = '\0';
+
+              for (int j = 0; j < i; j++) {
+                  strcat(jobs[job_count].command, v[j]);
+                  if (j < i - 1) {
+                      strcat(jobs[job_count].command, " ");
+                  }
+              }
               job_count++;
               
               // Print job start message
